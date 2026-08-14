@@ -59,11 +59,11 @@ const Header = ({ onSearch }) => {
 
             {/* ================= LOCATION ================= */}
             {/* DESKTOP ONLY */}
-            <div className="hidden md:flex items-center space-x-2 text-sm">
+            {/* <div className="hidden md:flex items-center space-x-2 text-sm">
               <MapPin className="w-4 h-4 text-primary" />
               <span className="text-gray-600">Deliver to</span>
               <span className="font-semibold">New York</span>
-            </div>
+            </div> */}
 
             {/* ================= DESKTOP SEARCH ================= */}
             <form
