@@ -1,0 +1,117 @@
+import { useState } from 'react';
+import { Plus, Minus, ShoppingCart, Star } from 'lucide-react';
+import { useCartStore } from '../store/cartStore';
+
+const ProductCard = ({ product }) => {
+  const [quantity, setQuantity] = useState(1);
+  const { cart, addToCart, updateQuantity, removeFromCart } = useCartStore();
+  const [isAdding, setIsAdding] = useState(false);
+  
+  const cartItem = cart.find((item) => item.id === product.id);
+  const currentQuantity = cartItem?.quantity || 0;
+
+  const handleAddToCart = () => {
+    setIsAdding(true);
+    addToCart(product, quantity);
+    setTimeout(() => setIsAdding(false), 300);
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(price);
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group">
+      {/* Image Container */}
+      <div className="relative h-56 overflow-hidden bg-gray-50">
+        <img
+          src={product.image}
+          alt={product.title}
+          className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+        />
+        {currentQuantity > 0 && (
+          <div className="absolute top-2 right-2 bg-[#00B207] text-white text-xs px-2 py-1 rounded-full shadow-lg">
+            {currentQuantity} in cart
+          </div>
+        )}
+        {product.rating && (
+          <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm flex items-center space-x-1">
+            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+            <span className="text-xs font-medium">{product.rating.rate}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="p-4 space-y-3">
+        <h3 className="text-sm font-medium text-gray-800 line-clamp-2 min-h-[40px] group-hover:text-[#00B207] transition-colors">
+          {product.title}
+        </h3>
+        
+        <p className="text-xs text-gray-500 capitalize">
+          {product.category}
+        </p>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-baseline space-x-2">
+            <span className="text-xl font-bold text-[#00B207]">
+              {formatPrice(product.price)}
+            </span>
+            <span className="text-xs text-gray-400 line-through">
+              {formatPrice(product.price * 1.3)}
+            </span>
+          </div>
+          <span className="text-xs text-gray-500">
+            {product.rating?.count || 0} sold
+          </span>
+        </div>
+
+        {/* Add to Cart / Quantity Controls */}
+        {currentQuantity > 0 ? (
+          <div className="flex items-center justify-between bg-[#00B207]/5 rounded-lg p-1.5 border border-[#00B207]/20">
+            <button
+              onClick={() => {
+                if (currentQuantity === 1) {
+                  removeFromCart(product.id);
+                } else {
+                  updateQuantity(product.id, currentQuantity - 1);
+                }
+              }}
+              className="p-1.5 hover:bg-[#00B207]/20 rounded-full transition-colors"
+            >
+              <Minus className="w-4 h-4 text-[#00B207]" />
+            </button>
+            <span className="font-medium text-sm min-w-[24px] text-center">
+              {currentQuantity}
+            </span>
+            <button
+              onClick={() => updateQuantity(product.id, currentQuantity + 1)}
+              className="p-1.5 hover:bg-[#00B207]/20 rounded-full transition-colors"
+            >
+              <Plus className="w-4 h-4 text-[#00B207]" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleAddToCart}
+            disabled={isAdding}
+            className={`w-full py-2.5 bg-[#00B207] text-white rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center space-x-2 ${
+              isAdding 
+                ? 'opacity-70 scale-95' 
+                : 'hover:bg-[#00B207]/90 hover:scale-105'
+            }`}
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span>Add to Cart</span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;
