@@ -7,11 +7,15 @@ const CartSidebar = ({ isOpen, onClose }) => {
   const totalPrice = getTotalPrice();
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("en-US", {
+  // Fake Store API returns prices in USD; convert to INR for display
+  const USD_TO_INR = 83;
+
+  const formatPrice = (usdPrice) => {
+    return new Intl.NumberFormat("en-IN", {
       style: "currency",
-      currency: "USD",
-    }).format(price);
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(usdPrice * USD_TO_INR);
   };
 
   if (!isOpen) return null;

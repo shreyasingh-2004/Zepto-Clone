@@ -13,14 +13,19 @@ const ProductCard = ({ product }) => {
   const handleAddToCart = () => {
     setIsAdding(true);
     addToCart(product, quantity);
+    setQuantity(1);
     setTimeout(() => setIsAdding(false), 300);
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("en-US", {
+  // Fake Store API returns prices in USD; convert to INR for display
+  const USD_TO_INR = 83;
+
+  const formatPrice = (usdPrice) => {
+    return new Intl.NumberFormat("en-IN", {
       style: "currency",
-      currency: "USD",
-    }).format(price);
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(usdPrice * USD_TO_INR);
   };
 
   return (
@@ -67,6 +72,29 @@ const ProductCard = ({ product }) => {
             {product.rating?.count || 0} sold
           </span>
         </div>
+
+        {/* Quantity stepper — only shown before the item is in the cart */}
+        {currentQuantity === 0 && (
+          <div className="flex items-center justify-center space-x-3">
+            <button
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              aria-label="Decrease quantity to add"
+            >
+              <Minus className="w-3.5 h-3.5 text-gray-600" />
+            </button>
+            <span className="text-sm font-medium min-w-[20px] text-center">
+              {quantity}
+            </span>
+            <button
+              onClick={() => setQuantity((q) => q + 1)}
+              className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              aria-label="Increase quantity to add"
+            >
+              <Plus className="w-3.5 h-3.5 text-gray-600" />
+            </button>
+          </div>
+        )}
 
         {/* Add to Cart / Quantity Controls */}
         {currentQuantity > 0 ? (

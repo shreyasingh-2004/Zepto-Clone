@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { fetchProducts, fetchProductsByCategory } from "../services/api";
 import ProductCard from "./ProductCard";
 
@@ -6,7 +6,6 @@ const ProductGrid = ({ selectedCategory, searchQuery }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -19,7 +18,6 @@ const ProductGrid = ({ selectedCategory, searchQuery }) => {
           : await fetchProducts(20);
 
         setProducts(data);
-        setFilteredProducts(data);
       } catch (error) {
         setError("Failed to load products. Please try again.");
         console.error("Error loading products:", error);
@@ -31,20 +29,21 @@ const ProductGrid = ({ selectedCategory, searchQuery }) => {
     loadProducts();
   }, [selectedCategory]);
 
-  useEffect(() => {
-    if (searchQuery && searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      const filtered = products.filter(
-        (product) =>
-          product.title.toLowerCase().includes(query) ||
-          product.category.toLowerCase().includes(query) ||
-          product.description.toLowerCase().includes(query)
-      );
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts(products);
+  // Derived value instead of duplicate state — recalculates whenever
+  // products or searchQuery change, no extra setState calls needed
+  const filteredProducts = useMemo(() => {
+    if (!searchQuery || !searchQuery.trim()) {
+      return products;
     }
-  }, [searchQuery, products]);
+
+    const query = searchQuery.toLowerCase().trim();
+    return products.filter(
+      (product) =>
+        product.title.toLowerCase().includes(query) ||
+        product.category.toLowerCase().includes(query) ||
+        product.description.toLowerCase().includes(query)
+    );
+  }, [products, searchQuery]);
 
   if (loading) {
     return (
