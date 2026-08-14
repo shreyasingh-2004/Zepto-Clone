@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "./component/Header";
 import CategoryTabs from "./component/CategoryTabs";
+import ProductGrid from "./component/ProductGrid";
 
 function App() {
   const [selectedCategory, setCategory] = useState(null);
@@ -16,12 +17,16 @@ function App() {
           onSelectCategory={setCategory}
         />
 
-        {/* Optional: testing search */}
         {searchQuery && (
-          <p className="mt-4 text-gray-600">
+          <p className="mt-2 mb-4 text-gray-600">
             Searching for: <strong>{searchQuery}</strong>
           </p>
         )}
+
+        <ProductGrid
+          selectedCategory={selectedCategory}
+          searchQuery={searchQuery}
+        />
       </main>
     </div>
   );

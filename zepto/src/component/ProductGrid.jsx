@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { fetchProducts, fetchProductsByCategory } from '../services/api';
-import ProductCard from './ProductCard';
+import { useState, useEffect } from "react";
+import { fetchProducts, fetchProductsByCategory } from "../services/api";
+import ProductCard from "./ProductCard";
 
 const ProductGrid = ({ selectedCategory, searchQuery }) => {
   const [products, setProducts] = useState([]);
@@ -13,16 +13,16 @@ const ProductGrid = ({ selectedCategory, searchQuery }) => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const data = selectedCategory
           ? await fetchProductsByCategory(selectedCategory)
           : await fetchProducts(20);
-        
+
         setProducts(data);
         setFilteredProducts(data);
       } catch (error) {
-        setError('Failed to load products. Please try again.');
-        console.error('Error loading products:', error);
+        setError("Failed to load products. Please try again.");
+        console.error("Error loading products:", error);
       } finally {
         setLoading(false);
       }
@@ -66,9 +66,9 @@ const ProductGrid = ({ selectedCategory, searchQuery }) => {
       <div className="text-center py-16">
         <div className="text-4xl mb-4">⚠️</div>
         <p className="text-gray-600 text-lg">{error}</p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
-          className="mt-4 px-6 py-2 bg-[#00B207] text-white rounded-full hover:bg-[#00B207]/90 transition-colors"
+          className="mt-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors"
         >
           Try Again
         </button>
@@ -82,7 +82,7 @@ const ProductGrid = ({ selectedCategory, searchQuery }) => {
         <div className="text-4xl mb-4">🔍</div>
         <p className="text-gray-600 text-lg">No products found</p>
         <p className="text-gray-400 text-sm mt-1">
-          {searchQuery ? `No results for "${searchQuery}"` : 'Try a different category'}
+          {searchQuery ? `No results for "${searchQuery}"` : "Try a different category"}
         </p>
       </div>
     );
@@ -98,4 +98,3 @@ const ProductGrid = ({ selectedCategory, searchQuery }) => {
 };
 
 export default ProductGrid;
-

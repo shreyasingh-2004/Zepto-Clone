@@ -1,67 +1,47 @@
-import axios from "axios";
+const BASE_URL = "https://fakestoreapi.com";
 
-const API_BASE_URL = "https://fakestoreapi.com/";
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
-});
-
-// Get products with optional limit
+// Fetch a list of products, optionally limited to `limit` results
 export const fetchProducts = async (limit = 20) => {
-    try {
-        const response = await api.get(`/products?limit=${limit}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        throw error;
-    }
-}; 
+  const res = await fetch(`${BASE_URL}/products?limit=${limit}`);
 
-// Get products by category
+  if (!res.ok) {
+    throw new Error(`Failed to fetch products (status ${res.status})`);
+  }
+
+  return res.json();
+};
+
+// Fetch products belonging to a single category
 export const fetchProductsByCategory = async (category) => {
-    try {
-        const response = await api.get(`/products/category/${category}`);
-        return response.data;
-    }
-    catch (error) {
-        console.error("Error fetching products by category:", error);
-        throw error;
-    }
+  const res = await fetch(
+    `${BASE_URL}/products/category/${encodeURIComponent(category)}`
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch category "${category}" (status ${res.status})`);
+  }
+
+  return res.json();
 };
 
-// Get all categories
+// Fetch the list of available category names
 export const fetchCategories = async () => {
-    try {
-        const response = await api.get("/products/categories");
-        return response.data;
-    }
-    catch (error) {
-        console.error("Error fetching categories:", error);
-        throw error;
-    }
+  const res = await fetch(`${BASE_URL}/products/categories`);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch categories (status ${res.status})`);
+  }
+
+  return res.json();
 };
 
-// Get single product by ID
-export const fetchProduct = async (id) => {
-    try {
-        const response = await api.get(`/products/${id}`);
-        return response.data;
-    }
-    catch (error) {
-        console.error("Error fetching product:", error);
-        throw error;
-    }
-};
+// Fetch a single product by id (handy for a future product detail page)
+export const fetchProductById = async (id) => {
+  const res = await fetch(`${BASE_URL}/products/${id}`);
 
-// Get products by category with limit
-export const fetchProductsByCategoryWithLimit = async (category, limit = 10) => {
-    try {
-        const response = await api.get(`/products/category/${category}?limit=${limit}`);
-        return response.data;
-    }
-    catch (error) {
-        console.error("Error fetching products by category with limit:", error);
-        throw error;
-    }
+  if (!res.ok) {
+    throw new Error(`Failed to fetch product ${id} (status ${res.status})`);
+  }
+
+  return res.json();
 };
